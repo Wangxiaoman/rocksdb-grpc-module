@@ -42,3 +42,14 @@ cd /workspace/grpc-java/compiler
 
 protoc --plugin=protoc-gen-grpc-java=build/exe/java_plugin/protoc-gen-grpc-java --grpc-java_out="/grcCodegen" --proto_path="/grcCodegen" "helloworld.proto"
 
+
+# 3、rocksdb的整合
+pom中集成lib
+
+<dependency>
+  <groupId>org.rocksdb</groupId>
+  <artifactId>rocksdbjni</artifactId>
+  <version>5.13.3</version>
+</dependency>
+
+java代码实例如下：https://github.com/facebook/rocksdb/wiki/RocksJava-Basics
