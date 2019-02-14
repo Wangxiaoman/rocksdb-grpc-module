@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.wxm.rocksdb";
+option java_outer_classname = "RocksdbProto";
+
+// The greeting service definition.
+service RocksdbAction {
+    // Sends a greeting
+    rpc saveKV (RocksdbRequest) returns (RocksdbActionReply) {
+    }
+
+    rpc saveKVS(RocksdbRequests) returns (RocksdbActionReply) {
+    }
+
+    rpc deleteKey (RocksdbRequest) returns (RocksdbActionReply) {
+    }
+
+    rpc deleteKeys (RocksdbRequests) returns (RocksdbActionReply) {
+    }
+
+    rpc getValue (RocksdbRequest) returns (RocksdbActionReply) {
+    }
+
+    rpc getValues (RocksdbRequests) returns (RocksdbActionKVSReply) {
+    }
+}
+
+message RocksdbRequest {
+    string table = 1;
+    string key = 2;
+    string value = 3;
+}
+
+message RocksdbRequests {
+    string table = 1;
+    repeated string keys = 2;
+    repeated string values = 3;
+}
+
+message RocksdbActionReply {
+    int32 code = 1;
+    string info = 2;
+    string data = 3;
+}
+
+message RocksdbActionKVSReply {
+    int32 code = 1;
+    string info = 2;
+    map<string, string> kvs = 3;
+}
