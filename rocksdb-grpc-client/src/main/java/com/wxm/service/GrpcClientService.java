@@ -1,4 +1,4 @@
-package com.wxm.grpc;
+package com.wxm.service;
 
 import org.springframework.stereotype.Service;
 

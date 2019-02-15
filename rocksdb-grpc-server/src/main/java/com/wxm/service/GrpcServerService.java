@@ -1,4 +1,4 @@
-package com.wxm.grpc;
+package com.wxm.service;
 
 import java.util.HashMap;
 import java.util.List;
