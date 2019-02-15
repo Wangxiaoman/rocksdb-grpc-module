@@ -1,7 +1,5 @@
 package com.wxm.constants;
 
-import com.alibaba.fastjson.JSONObject;
-
 public class ResultJson {
 	private int code;
 	private String info;
@@ -42,12 +40,4 @@ public class ResultJson {
 	public void setData(Object data) {
 		this.data = data;
 	}
-	
-	public JSONObject toJson() {
-        JSONObject json = new JSONObject();
-        json.put("code", this.code);
-        json.put("info", this.info);
-        json.put("data", this.data);
-        return json;
-    }
 }
