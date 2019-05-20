@@ -10,12 +10,12 @@ github：https://github.com/protocolbuffers/protobuf
 下载路径：https://github.com/protocolbuffers/protobuf/releases
 
 cd到protobuf-x.x.x目录
-$./configure
-$make
-$make check
-$sudo make install 
-$which protoc
-$protoc —version
+* $./configure
+* $make
+* $make check
+* $sudo make install 
+* $which protoc
+* $protoc —version
 
 代码生成：
 https://developers.google.com/protocol-buffers/docs/javatutorial
