@@ -2,6 +2,8 @@
 
 利用github上 yidongnan/grpc-spring-boot-starter 来实现
 
+https://github.com/yidongnan/grpc-spring-boot-starter
+
 # 1、PB（protobuf)
 
 安装：
