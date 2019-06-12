@@ -45,6 +45,8 @@ public class RocksSourceService {
     private int dbOpenFileCnt;
     @Value("${rocksdb.max.total.wal.size}")
     private int dbMaxTotoalWal;
+    @Value("${rocksdb.db.buffer.size}")
+    private int dbBufferSize;
     
     private static RocksDB db = null;
     private static final List<ColumnFamilyHandle> columnFamilyHandles = new ArrayList<>();
@@ -54,10 +56,10 @@ public class RocksSourceService {
     
     @PostConstruct
     public void init(){
-        load(dbPath, dbFlushCnt, dbCompactCnt, dbOpenFileCnt, dbMaxTotoalWal);
+        load(dbPath, dbFlushCnt, dbCompactCnt, dbOpenFileCnt, dbMaxTotoalWal, dbBufferSize);
     }
 
-    private void load(String dbPath,int dbFlushCnt,int dbCompactCnt,int dbOpenFileCnt,int dbMaxTotoalWal) {
+    private void load(String dbPath,int dbFlushCnt,int dbCompactCnt,int dbOpenFileCnt,int dbMaxTotoalWal, int dbBufferSize) {
         System.out.println("【rocksdb init beigin】dbPath:"+dbPath);
         CommonLogger.info("【rocksdb init beigin】dbPath:"+dbPath);
         long beginTime = System.currentTimeMillis();
@@ -77,7 +79,7 @@ public class RocksSourceService {
                         RocksDB.DEFAULT_COLUMN_FAMILY, new ColumnFamilyOptions()));
             }
             db = RocksDB.open(
-                    getCommonDBOptions(dbFlushCnt, dbCompactCnt, dbOpenFileCnt, dbMaxTotoalWal),
+                    getCommonDBOptions(dbFlushCnt, dbCompactCnt, dbOpenFileCnt, dbMaxTotoalWal, dbBufferSize),
                     dbPath, columnFamilyDescriptors, columnFamilyHandles);
             for (ColumnFamilyHandle c : columnFamilyHandles) {
                 columnFamilyHandleMap.put(new String(c.getName()), c);
@@ -91,14 +93,14 @@ public class RocksSourceService {
         }
     }
 
-    private synchronized static DBOptions getCommonDBOptions(int dbFlushCnt,int dbCompactCnt,int dbOpenFileCnt,int dbMaxTotoalWal) {
+    private synchronized static DBOptions getCommonDBOptions(int dbFlushCnt,int dbCompactCnt,int dbOpenFileCnt,int dbMaxTotoalWal, int dbBufferSize) {
         if(dbOptions == null){
-            dbOptions = createDBOptions(dbFlushCnt, dbCompactCnt, dbOpenFileCnt, dbMaxTotoalWal);
+            dbOptions = createDBOptions(dbFlushCnt, dbCompactCnt, dbOpenFileCnt, dbMaxTotoalWal, dbBufferSize);
         }
         return dbOptions;
     }
     
-    private static DBOptions createDBOptions(int dbFlushCnt,int dbCompactCnt,int dbOpenFileCnt,int dbMaxTotoalWal){
+    private static DBOptions createDBOptions(int dbFlushCnt,int dbCompactCnt,int dbOpenFileCnt,int dbMaxTotoalWal, int dbBufferSize){
         DBOptions dbOptions = new DBOptions();
         final RateLimiter rateLimiter = new RateLimiter(10000000, 10000, 10);
         dbOptions.setCreateIfMissing(true);
@@ -108,7 +110,8 @@ public class RocksSourceService {
         dbOptions.setMaxBackgroundCompactions(dbCompactCnt);// 设置为10个线程
         dbOptions.setMaxOpenFiles(dbOpenFileCnt);// 最大文件句柄为400个
         dbOptions.setMaxTotalWalSize(dbMaxTotoalWal * SizeUnit.MB);
-        
+        dbOptions.setDbWriteBufferSize(dbBufferSize * SizeUnit.MB);
+        dbOptions.setWritableFileMaxBufferSize(256 * SizeUnit.MB);
         
 //        dbOptions.setMaxTotalWalSize(256 * SizeUnit.MB);
 //        dbOptions.setMaxLogFileSize(16 * SizeUnit.MB);
