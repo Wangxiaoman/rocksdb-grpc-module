@@ -1,5 +1,6 @@
 package com.wxm.rocksdb;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public class RocksDBService {
                 return cfh;
             }
             cfh = RocksSourceService.getRocksDB().createColumnFamily(
-                    new ColumnFamilyDescriptor(table.getBytes(), new ColumnFamilyOptions()));
+                    new ColumnFamilyDescriptor(table.getBytes(StandardCharsets.UTF_8), new ColumnFamilyOptions()));
             RocksSourceService.getColumnFamily().put(table, cfh);
         }
         
@@ -45,7 +46,7 @@ public class RocksDBService {
 
     public int put(String table, String key, String value) {
         try {
-            RocksSourceService.getRocksDB().put(getColumn(table), key.getBytes(), value.getBytes());
+            RocksSourceService.getRocksDB().put(getColumn(table), key.getBytes(StandardCharsets.UTF_8), value.getBytes(StandardCharsets.UTF_8));
             return 1;
         } catch (Exception ex) {
             CommonLogger.error("【rocksdb write】error", ex);
@@ -55,7 +56,7 @@ public class RocksDBService {
 
     public boolean keyMayExist(String table, String key) {
         try {
-            return RocksSourceService.getRocksDB().keyMayExist(getColumn(table), key.getBytes(), new StringBuilder());
+            return RocksSourceService.getRocksDB().keyMayExist(getColumn(table), key.getBytes(StandardCharsets.UTF_8), new StringBuilder());
         } catch (Exception ex) {
             CommonLogger.error("【rocksdb keyMayExist】error", ex);
         }
@@ -64,7 +65,7 @@ public class RocksDBService {
 
     public String get(String table, String key) {
         try {
-            byte[] result = RocksSourceService.getRocksDB().get(getColumn(table), key.getBytes());
+            byte[] result = RocksSourceService.getRocksDB().get(getColumn(table), key.getBytes(StandardCharsets.UTF_8));
             if (result == null) {
                 return StringUtils.EMPTY;
             }
@@ -81,7 +82,7 @@ public class RocksDBService {
         Map<String,String> result = new HashMap<>();
         try {
             for(String key : keys){
-                keyBytes.add(key.getBytes());
+                keyBytes.add(key.getBytes(StandardCharsets.UTF_8));
                 columns.add(getColumn(table));
             }
             Map<byte[], byte[]> map = RocksSourceService.getRocksDB().multiGet(columns, keyBytes);
@@ -99,7 +100,7 @@ public class RocksDBService {
 
     public int delete(String table, String key) {
         try {
-            RocksSourceService.getRocksDB().delete(getColumn(table), key.getBytes());
+            RocksSourceService.getRocksDB().delete(getColumn(table), key.getBytes(StandardCharsets.UTF_8));
             return 1;
         } catch (Exception ex) {
             CommonLogger.error("【rocksdb delete】error", ex);
@@ -114,7 +115,7 @@ public class RocksDBService {
         WriteBatch writeBatch = new WriteBatch();
         try {
             for (Entry<String, String> kv : kvs.entrySet()) {
-                writeBatch.put(getColumn(table), kv.getKey().getBytes(), kv.getValue().getBytes());
+                writeBatch.put(getColumn(table), kv.getKey().getBytes(StandardCharsets.UTF_8), kv.getValue().getBytes(StandardCharsets.UTF_8));
             }
             RocksSourceService.getRocksDB().write(new WriteOptions(), writeBatch);
             return 1;
@@ -133,7 +134,7 @@ public class RocksDBService {
         WriteBatch writeBatch = new WriteBatch();
         try {
             for (String key : keys) {
-                writeBatch.delete(getColumn(table), key.getBytes());
+                writeBatch.delete(getColumn(table), key.getBytes(StandardCharsets.UTF_8));
             }
             RocksSourceService.getRocksDB().write(new WriteOptions(), writeBatch);
             return 1;
